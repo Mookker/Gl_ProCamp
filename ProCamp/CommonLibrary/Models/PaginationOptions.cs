@@ -11,10 +11,5 @@ namespace CommonLibrary.Models
         /// Limit
         /// </summary>
         public int? Limit { get; set; }
-        
-        /// <summary>
-        /// Order by field
-        /// </summary>
-        public string OrderBy { get; set; }
     }
 }

@@ -11,6 +11,8 @@ using Newtonsoft.Json.Serialization;
 using ProCamp.Models;
 using ProCamp.Models.Requests;
 using ProCamp.Models.Responses;
+using ProCamp.Repositories.Implementations;
+using ProCamp.Repositories.Interfaces;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -61,6 +63,9 @@ namespace ProCamp
                 c.CreateMap<Fixture, FixturesResponse>();
                 c.CreateMap<CreateFixtureRequest, Fixture>().ForMember(m => m.Id, expression => expression.Ignore());
             });
+
+
+            services.AddSingleton<IFixturesRepository, FixturesRepository>();
         }
 
         /// <summary>

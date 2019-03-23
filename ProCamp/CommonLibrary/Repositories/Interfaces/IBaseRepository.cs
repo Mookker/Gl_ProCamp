@@ -28,7 +28,7 @@ namespace CommonLibrary.Repositories.Interfaces
         /// </summary>
         /// <param name="searchOptions"></param>
         /// <returns></returns>
-        Task<long> GetMultipleCount(TSearch searchOptions);
+        Task<int> GetMultipleCount(TSearch searchOptions);
 
         /// <summary>
         /// Convenience method to get by id
@@ -42,14 +42,14 @@ namespace CommonLibrary.Repositories.Interfaces
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        Task<TModel> Create(TModel item);
+        Task<bool> Create(TModel item);
 
         /// <summary>
         /// Replaces item
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        Task<TModel> Replace(TModel item);
+        Task<bool> Replace(TModel item);
 
         /// <summary>
         /// Removes item by id
@@ -57,5 +57,12 @@ namespace CommonLibrary.Repositories.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<bool> Remove(string id);
+
+        /// <summary>
+        /// Checks if item exists
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<bool> Exists(string id);
     }
 }

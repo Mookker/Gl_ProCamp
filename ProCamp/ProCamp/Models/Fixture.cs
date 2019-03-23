@@ -1,17 +1,13 @@
 using System;
+using CommonLibrary.Models;
 
 namespace ProCamp.Models
 {
     /// <summary>
     /// Simple fixture
     /// </summary>
-    public class Fixture
+    public class Fixture : BaseModelWithId
     {
-        /// <summary>
-        /// Id of fixture
-        /// </summary>
-        public string Id { get; set; }
-        
         /// <summary>
         /// Date of game
         /// </summary>
