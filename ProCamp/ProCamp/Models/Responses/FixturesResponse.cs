@@ -1,9 +1,11 @@
 using System;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace ProCamp.Models.Responses
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Serializable]
     public class FixturesResponse
     {
