@@ -65,7 +65,7 @@ namespace ProCamp.Controllers
         /// <param name="queryParams"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(List<Fixture>), 200)]
+        [ProducesResponseType(typeof(List<FixturesResponse>), 200)]
         public async Task<IActionResult> GetAllFixtures([FromQuery] FixturesQueryParams queryParams)
         {
             var fixtures = await _fixturesRepository.GetMultiple(queryParams !=null ? new FixturesSearchOptions
@@ -104,7 +104,7 @@ namespace ProCamp.Controllers
         /// <param name="createFixtureRequest"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(typeof(Fixture), 200)]
+        [ProducesResponseType(typeof(FixturesResponse), 200)]
         [ProducesResponseType(typeof(BadRequestResponse), 400)]
         public async Task<IActionResult> CreateFixture([FromBody] CreateFixtureRequest createFixtureRequest)
         {
@@ -136,7 +136,7 @@ namespace ProCamp.Controllers
         /// <param name="updateFixtureRequest"></param>
         /// <returns></returns>
         [HttpPut("{fixtureId}")]
-        [ProducesResponseType(typeof(Fixture), 200)]
+        [ProducesResponseType(typeof(FixturesResponse), 200)]
         [ProducesResponseType(typeof(BadRequestResponse), 400)]
         public async Task<IActionResult> UpdateOrCreateFixture(string fixtureId,
             [FromBody] UpdateFixtureRequest updateFixtureRequest)
@@ -175,7 +175,7 @@ namespace ProCamp.Controllers
         /// <param name="fixtureId"></param>
         /// <returns></returns>
         [HttpDelete("{fixtureId}")]
-        [ProducesResponseType(typeof(Fixture), 200)]
+        [ProducesResponseType(typeof(FixturesResponse), 200)]
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
         public async Task<IActionResult> DeleteFixtureById([FromRoute]string fixtureId)
         {
@@ -193,7 +193,7 @@ namespace ProCamp.Controllers
         /// <param name="fixtureId"></param>
         /// <returns></returns>
         [HttpHead("{fixtureId}")]
-        [ProducesResponseType(typeof(Fixture), 200)]
+        [ProducesResponseType(typeof(FixturesResponse), 200)]
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
         public IActionResult FixtureExists([FromRoute] string fixtureId)
         {
