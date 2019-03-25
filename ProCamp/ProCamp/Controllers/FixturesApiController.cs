@@ -59,7 +59,7 @@ namespace ProCamp.Controllers
         /// <param name="fixtureId"></param>
         /// <returns></returns>
         [HttpGet("{fixtureId}")]
-        [ProducesResponseType(typeof(Fixture), 200)]
+        [ProducesResponseType(typeof(FixturesResponse), 200)]
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
         public IActionResult GetFixtureById([FromRoute]string fixtureId)
         {
@@ -67,7 +67,7 @@ namespace ProCamp.Controllers
             if (fixture == null)
                 return NotFound(new NotFoundErrorResponse($"fixture with id {fixtureId}"));
 
-            return Ok(fixture);
+            return Ok(Mapper.Map<FixturesResponse>(fixture));
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace ProCamp.Controllers
             newFixture.Id = Guid.NewGuid().ToString("N");
             _fixtures.Add(newFixture);
 
-            return Ok(newFixture);
+            return Ok(Mapper.Map<FixturesResponse>(newFixture));
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace ProCamp.Controllers
                 _fixtures[index] = fixture;
             }
 
-            return Ok(fixture);
+            return Ok(Mapper.Map<FixturesResponse>(fixture));
         }
         
         /// <summary>
@@ -161,6 +161,24 @@ namespace ProCamp.Controllers
         {
             var count = _fixtures.RemoveAll(f => f.Id == fixtureId);
             if (count < 1)
+                return NotFound(new NotFoundErrorResponse($"fixture with id {fixtureId}"));
+
+            return Ok();
+        }
+
+
+        /// <summary>
+        /// Checks if fixture exists
+        /// </summary>
+        /// <param name="fixtureId"></param>
+        /// <returns></returns>
+        [HttpHead("{fixtureId}")]
+        [ProducesResponseType(typeof(Fixture), 200)]
+        [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
+        public IActionResult FixtureExists([FromRoute] string fixtureId)
+        {
+            var exists = _fixtures.Any(f => f.Id == fixtureId);
+            if (!exists)
                 return NotFound(new NotFoundErrorResponse($"fixture with id {fixtureId}"));
 
             return Ok();
