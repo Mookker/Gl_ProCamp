@@ -2,12 +2,19 @@
 using System.IO;
 using System.Xml.XPath;
 using AutoMapper;
+using CommonLibrary.Cache.Implementations;
+using CommonLibrary.Cache.Interfaces;
+using CommonLibrary.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
+using ProCamp.Managers;
+using ProCamp.Managers.Cache;
+using ProCamp.Managers.Cache.Interfaces;
+using ProCamp.Managers.Interfaces;
 using ProCamp.Models;
 using ProCamp.Models.Requests;
 using ProCamp.Models.Responses;
@@ -25,7 +32,7 @@ namespace ProCamp
     {
         private readonly IHostingEnvironment _hostingEnv;
         private readonly string ApiName = "ProCampApi";
-        
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -35,6 +42,16 @@ namespace ProCamp
         {
             _hostingEnv = hostingEnv;
             Configuration = configuration;
+
+            var builder = new ConfigurationBuilder();
+
+            if (_hostingEnv.IsEnvironment("Development"))
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+            
+            builder.AddConfiguration(configuration);
+            Configuration = builder.Build();
         }
 
         /// <summary>
@@ -53,10 +70,10 @@ namespace ProCamp
             {
                 opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
-            
-            
+
+
             services.AddSwaggerGen(options => { SetupSwagger(options, ApiName, _hostingEnv); });
-            
+
             Mapper.Initialize(c =>
             {
                 c.CreateMissingTypeMaps = true;
@@ -64,8 +81,17 @@ namespace ProCamp
                 c.CreateMap<CreateFixtureRequest, Fixture>().ForMember(m => m.Id, expression => expression.Ignore());
             });
 
+            services.Configure<RedisCacheConfiguration>(x =>
+            {
+                x.ConnectionString = RedisConnectionString(Configuration);
+                x.Environment = "Development";
+                x.ApiName = ApiName;
+            });
 
+            services.AddSingleton<IBaseCache, BaseCache>();
             services.AddSingleton<IFixturesRepository, FixturesRepository>();
+            services.AddSingleton<IFixturesCacheManager, FixturesCacheManager>();
+            services.AddSingleton<IFixtureManager, FixtureManager>();
         }
 
         /// <summary>
@@ -87,12 +113,12 @@ namespace ProCamp
 
             app.UseHttpsRedirection();
             app.UseMvc();
-            
-            
+
+
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", ApiName));
         }
-        
+
         private static void SetupSwagger(SwaggerGenOptions options, string apiName, IHostingEnvironment hostingEnv)
         {
             options.SwaggerDoc("v1", new Info
@@ -105,12 +131,14 @@ namespace ProCamp
             options.DescribeAllEnumsAsStrings();
 
             var comments =
-                new XPathDocument($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{hostingEnv.ApplicationName}.xml");
+                new XPathDocument(
+                    $"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{hostingEnv.ApplicationName}.xml");
             options.OperationFilter<XmlCommentsOperationFilter>(comments);
 
             options.AddSecurityDefinition("Bearer", new ApiKeyScheme()
             {
-                Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                Description =
+                    "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                 Name = "Authorization",
                 In = "header",
                 Type = "apiKey"
@@ -118,5 +146,22 @@ namespace ProCamp
 
             options.IgnoreObsoleteActions();
         }
+
+        private string RedisConnectionString(IConfiguration configuration)
+        {
+            var redisUri = "127.0.0.1:6379";
+            if (configuration != null)
+            {
+                var configValue = configuration["SecretRedisConnectionString"] ??
+                                  configuration.GetConnectionString("RedisConnectionString");
+                if (string.IsNullOrEmpty(configValue))
+                {
+                    redisUri = configValue;
+                }
+            }
+
+            return redisUri;
+        }
     }
 }
+

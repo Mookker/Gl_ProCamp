@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CommonLibrary.Models.Errors;
 using Microsoft.AspNetCore.Mvc;
+using ProCamp.Managers.Interfaces;
 using ProCamp.Models;
 using ProCamp.Models.QueryParams;
 using ProCamp.Models.Requests;
@@ -21,6 +22,7 @@ namespace ProCamp.Controllers
     public class FixturesApiController : Controller
     {
         private readonly IFixturesRepository _fixturesRepository;
+        private readonly IFixtureManager _fixtureManager;
 
         private static List<Fixture> _fixtures = new List<Fixture>
         {
@@ -53,10 +55,11 @@ namespace ProCamp.Controllers
         /// Constuctor
         /// </summary>
         /// <param name="fixturesRepository"></param>
-        public FixturesApiController(IFixturesRepository fixturesRepository)
+        /// <param name="fixtureManager"></param>
+        public FixturesApiController(IFixturesRepository fixturesRepository, IFixtureManager fixtureManager)
         {
             _fixturesRepository = fixturesRepository;
-            
+            _fixtureManager = fixtureManager;
         }
 
         /// <summary>
@@ -90,7 +93,7 @@ namespace ProCamp.Controllers
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
         public async Task<IActionResult> GetFixtureById([FromRoute]string fixtureId)
         {
-            var fixture = await _fixturesRepository.GetById(fixtureId);
+            var fixture = await _fixtureManager.GetFixture(fixtureId);
             
             if (fixture == null)
                 return NotFound(new NotFoundErrorResponse($"fixture with id {fixtureId}"));
