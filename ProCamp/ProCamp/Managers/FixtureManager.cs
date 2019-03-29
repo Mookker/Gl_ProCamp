@@ -1,7 +1,4 @@
-using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
 using ProCamp.Managers.Cache.Interfaces;
 using ProCamp.Managers.Interfaces;
 using ProCamp.Models;

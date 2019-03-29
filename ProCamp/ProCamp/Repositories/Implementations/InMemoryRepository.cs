@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using CommonLibrary.Models;
 using CommonLibrary.Models.Search;
 using CommonLibrary.Repositories.Interfaces;
-using ProCamp.Models;
 
 namespace ProCamp.Repositories.Implementations
 {
