@@ -28,7 +28,7 @@ namespace CommonLibrary.Repositories.Interfaces
         /// </summary>
         /// <param name="searchOptions"></param>
         /// <returns></returns>
-        Task<int> GetMultipleCount(TSearch searchOptions);
+        Task<long> GetMultipleCount(TSearch searchOptions);
 
         /// <summary>
         /// Convenience method to get by id
@@ -42,7 +42,7 @@ namespace CommonLibrary.Repositories.Interfaces
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        Task<bool> Create(TModel item);
+        Task<TModel> Create(TModel item);
 
         /// <summary>
         /// Replaces item

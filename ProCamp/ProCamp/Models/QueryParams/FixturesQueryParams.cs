@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 
 namespace ProCamp.Models.QueryParams
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Serializable]
     public class FixturesQueryParams
     {

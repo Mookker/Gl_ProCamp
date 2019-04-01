@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 using Newtonsoft.Json.Serialization;
 using ProCamp.Managers;
 using ProCamp.Managers.Cache;
@@ -88,6 +89,11 @@ namespace ProCamp
                 x.ApiName = ApiName;
             });
 
+            services.Configure<MongoConfiguration>(x =>
+                x.DbName = Configuration.GetValue<string>("MongoDbName") ?? "football");
+
+            services.AddSingleton<IMongoClient>(x => new MongoClient(MongoConnectionString(Configuration)));
+
             services.AddSingleton<IBaseCache, BaseCache>();
             services.AddSingleton<IFixturesRepository, FixturesRepository>();
             services.AddSingleton<IFixturesCacheManager, FixturesCacheManager>();
@@ -162,6 +168,23 @@ namespace ProCamp
 
             return redisUri;
         }
+
+        private string MongoConnectionString(IConfiguration configuration)
+        {
+            var redisUri = "127.0.0.1:27017";
+            if (configuration != null)
+            {
+                var configValue = configuration["SecretMongoConnectionString"] ??
+                                  configuration.GetConnectionString("MongoConnectionString");
+                if (string.IsNullOrEmpty(configValue))
+                {
+                    redisUri = configValue;
+                }
+            }
+
+            return redisUri;
+        }
+        
     }
 }
 

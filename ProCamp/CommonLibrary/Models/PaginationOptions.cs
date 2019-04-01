@@ -1,3 +1,5 @@
+using CommonLibrary.Enums;
+
 namespace CommonLibrary.Models
 {
     public class PaginationOptions
@@ -11,5 +13,15 @@ namespace CommonLibrary.Models
         /// Limit
         /// </summary>
         public int? Limit { get; set; }
+        
+        /// <summary>
+        /// Ordering
+        /// </summary>
+        public Ordering Ordering { get; set; }
+        
+        /// <summary>
+        /// Order by
+        /// </summary>
+        public string OrderBy { get; set; }
     }
 }

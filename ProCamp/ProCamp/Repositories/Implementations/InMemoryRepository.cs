@@ -41,10 +41,10 @@ namespace ProCamp.Repositories.Implementations
         }
 
         /// <inheritdoc />
-        public Task<int> GetMultipleCount(TSearch searchOptions)
+        public Task<long> GetMultipleCount(TSearch searchOptions)
         {
             var query = Data.Where(GetSearchDefinition(searchOptions));
-            return Task.FromResult(query.Count());
+            return Task.FromResult((long)query.Count());
         }
 
         /// <inheritdoc />
@@ -55,10 +55,10 @@ namespace ProCamp.Repositories.Implementations
         }
 
         /// <inheritdoc />
-        public Task<bool> Create(TModel item)
+        public Task<TModel> Create(TModel item)
         {
             Data.Add(item);
-            return Task.FromResult(true);
+            return Task.FromResult(item);
         }
 
         /// <inheritdoc />
