@@ -23,7 +23,10 @@ namespace ProCamp.Managers
             if (cached == null)
             {
                 var result = await _fixturesRepository.GetById(fixtureId);
-                await _fixturesCacheManager.AddFixture(result);
+                if (result != null)
+                {
+                    await _fixturesCacheManager.AddFixture(result);
+                }
                 
                 return result;
             }
