@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CommonLibrary.Repositories.Implementations;
 using Microsoft.Extensions.Logging;
 using ProCamp.Models;
 using ProCamp.Models.Search;
@@ -7,15 +8,15 @@ using ProCamp.Repositories.Interfaces;
 
 namespace ProCamp.Repositories.Implementations
 {
-    /// <inheritdoc />
-    public class FixturesRepository : InMemoryRepository<Fixture, FixturesSearchOptions>, IFixturesRepository
+    /// <inheritdoc cref="IFixturesRepository" />
+    public class InMemoryFixturesRepository : BaseInMemoryRepository<Fixture, FixturesSearchOptions>, IFixturesRepository
     {
-        private readonly ILogger<FixturesRepository> _logger;
+        private readonly ILogger<InMemoryFixturesRepository> _logger;
 
         /// <summary>
         /// Ctor
         /// </summary>
-        public FixturesRepository(ILogger<FixturesRepository> logger)
+        public InMemoryFixturesRepository(ILogger<InMemoryFixturesRepository> logger)
         {
             _logger = logger;
             Data = new List<Fixture>();

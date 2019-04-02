@@ -6,10 +6,10 @@ using CommonLibrary.Models;
 using CommonLibrary.Models.Search;
 using CommonLibrary.Repositories.Interfaces;
 
-namespace ProCamp.Repositories.Implementations
+namespace CommonLibrary.Repositories.Implementations
 {
     /// <inheritdoc />
-    public abstract class InMemoryRepository<TModel, TSearch> : IBaseRepository<TModel, TSearch> 
+    public abstract class BaseInMemoryRepository<TModel, TSearch> : IBaseRepository<TModel, TSearch> 
                                                         where TModel : BaseModelWithId, new() 
                                                         where TSearch: BaseSearchOptions
     {

@@ -95,7 +95,7 @@ namespace ProCamp
             services.AddSingleton<IMongoClient>(x => new MongoClient(MongoConnectionString(Configuration)));
 
             services.AddSingleton<IBaseCache, BaseCache>();
-            services.AddSingleton<IFixturesRepository, FixturesRepository>();
+            services.AddSingleton<IFixturesRepository, MongoDbFixturesRepository>();
             services.AddSingleton<IFixturesCacheManager, FixturesCacheManager>();
             services.AddSingleton<IFixtureManager, FixtureManager>();
         }
@@ -160,7 +160,7 @@ namespace ProCamp
             {
                 var configValue = configuration["SecretRedisConnectionString"] ??
                                   configuration.GetConnectionString("RedisConnectionString");
-                if (string.IsNullOrEmpty(configValue))
+                if (!string.IsNullOrEmpty(configValue))
                 {
                     redisUri = configValue;
                 }
@@ -171,18 +171,18 @@ namespace ProCamp
 
         private string MongoConnectionString(IConfiguration configuration)
         {
-            var redisUri = "127.0.0.1:27017";
+            var mongoConnectionString = "127.0.0.1:27017";
             if (configuration != null)
             {
                 var configValue = configuration["SecretMongoConnectionString"] ??
                                   configuration.GetConnectionString("MongoConnectionString");
-                if (string.IsNullOrEmpty(configValue))
+                if (!string.IsNullOrEmpty(configValue))
                 {
-                    redisUri = configValue;
+                    mongoConnectionString = configValue;
                 }
             }
 
-            return redisUri;
+            return mongoConnectionString;
         }
         
     }
