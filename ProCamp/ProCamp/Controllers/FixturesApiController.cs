@@ -31,22 +31,25 @@ namespace ProCamp.Controllers
                 Id = "1",
                 AwayTeamName = "ManCity",
                 HomeTeamName = "Fulham",
-                Date = new DateTime(2019, 3, 30, 12, 30, 0)
+                Date = new DateTime(2019, 3, 30, 12, 30, 0),
+                Location = new List<double>{-2.2002, 53.4765}
             },
             new Fixture
             {
-                Id = Guid.NewGuid().ToString("N"),
+                Id = "2",
                 AwayTeamName = "Cardiff City",
                 HomeTeamName = "ManCity",
-                Date = new DateTime(2019, 4, 3, 19, 45, 0)
+                Date = new DateTime(2019, 4, 3, 19, 45, 0),
+                Location = new List<double>{ -3.2018, 51.4703}
             },
             
             new Fixture
             {
-                Id = Guid.NewGuid().ToString("N"),
-                AwayTeamName = "ManCity",
-                HomeTeamName = "Brighton",
-                Date = new DateTime(2019, 4, 6, 17, 30, 0)
+                Id = "3",
+                AwayTeamName = "Brighton",
+                HomeTeamName = "Man City",
+                Date = new DateTime(2019, 4, 6, 17, 30, 0),
+                Location = new List<double>{ -0.0766330268, 50.857089905}
             },
             
         };
@@ -207,6 +210,23 @@ namespace ProCamp.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Gets nearest fixtures
+        /// </summary>
+        /// <param name="nearestQueryParams"></param>
+        /// <returns></returns>
+        [HttpGet("/nearest")]
+        [ProducesResponseType(typeof(List<NearestFixture>), 200)]
+        [ProducesResponseType(typeof(BadRequestResponse), 400)]
+        public async Task<IActionResult> GetNearestFixtures([FromQuery] NearestQueryParams nearestQueryParams)
+        {
+            //TODO: params validation
+            var fixtures = await _fixtureManager.GetNearestFixtures(nearestQueryParams.Longitude,
+                nearestQueryParams.Latitude, nearestQueryParams.Offset, nearestQueryParams.Limit);
+
+            return Ok(fixtures);
+        }
+        
         /// <summary>
         /// Seeds data
         /// </summary>

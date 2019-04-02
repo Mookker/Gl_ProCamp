@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CommonLibrary.Repositories.Implementations;
 using Microsoft.Extensions.Logging;
 using ProCamp.Models;
@@ -41,7 +42,7 @@ namespace ProCamp.Repositories.Implementations
             if (!String.IsNullOrWhiteSpace(searchOptions.HomeTeamName))
             {
                 var previousResult = result;
-                result = (fixture => fixture.AwayTeamName == searchOptions.HomeTeamName && previousResult(fixture));
+                result = (fixture => fixture.HomeTeamName == searchOptions.HomeTeamName && previousResult(fixture));
             }
 
             if (!String.IsNullOrWhiteSpace(searchOptions.AwayTeamName))
@@ -63,6 +64,13 @@ namespace ProCamp.Repositories.Implementations
             }
 
             return result.Invoke;
+        }
+
+        /// <inheritdoc />
+        public Task<List<NearestFixture>> GetNearestFixtures(double longitude, double latitude, int offset = 0,
+            int limit = 10)
+        {
+            throw new NotImplementedException();
         }
     }
 }

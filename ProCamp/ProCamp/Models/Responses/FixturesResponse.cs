@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace ProCamp.Models.Responses
@@ -32,5 +33,11 @@ namespace ProCamp.Models.Responses
         /// </summary>
         [JsonProperty]
         public string AwayTeamName { get; set; }
+        
+        /// <summary>
+        /// Location
+        /// </summary>
+        [JsonProperty]
+        public List<double> Location { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ProCamp.Managers.Cache.Interfaces;
 using ProCamp.Managers.Interfaces;
@@ -32,6 +33,12 @@ namespace ProCamp.Managers
             }
 
             return cached;
+        }
+
+        
+        public Task<List<NearestFixture>> GetNearestFixtures(double longitude, double latitude, int offset, int limit)
+        {
+            return _fixturesRepository.GetNearestFixtures(longitude, latitude, offset, limit);
         }
     }
 }
