@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Xml.XPath;
 using AutoMapper;
 using CommonLibrary.Cache.Implementations;
 using CommonLibrary.Cache.Interfaces;
 using CommonLibrary.Config;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using Newtonsoft.Json.Serialization;
 using ProCamp.Managers;
@@ -72,7 +78,31 @@ namespace ProCamp
                 opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
 
+            services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+            {
+                o.TokenValidationParameters.ValidateIssuer = true;
+                o.TokenValidationParameters.ValidIssuer = Configuration.GetValue<string>("iss");
+                o.TokenValidationParameters.ValidateIssuerSigningKey = true;
+                o.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("JwtSecret")));
+                o.TokenValidationParameters.ValidateAudience = false;
+                o.TokenValidationParameters.ValidateLifetime = true;
+                o.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
+            });
 
+            services.Configure<JwtOptions>(o =>
+            {
+                o.Iss = Configuration.GetValue<string>("iss");
+                o.Key = Configuration.GetValue<string>("JwtSecret");
+            });
+            
+            services.Configure<ApiKeyManagerOptions>(o => 
+            {
+                o.Password = Configuration.GetValue<string>("ApiKeyManagerPassword");
+            });
             services.AddSwaggerGen(options => { SetupSwagger(options, ApiName, _hostingEnv); });
 
             Mapper.Initialize(c =>
@@ -98,6 +128,13 @@ namespace ProCamp
             services.AddSingleton<IFixturesRepository, MongoDbFixturesRepository>();
             services.AddSingleton<IFixturesCacheManager, FixturesCacheManager>();
             services.AddSingleton<IFixtureManager, FixtureManager>();
+            services.AddSingleton<IRoleManager, RoleManager>();
+            services.AddSingleton<IUserManager, UserManager>();
+            services.AddSingleton<IApiKeyManager, ApiKeyManager>();
+            services.AddSingleton<IApiKeyRepository, MongoDbApiKeyRepository>();
+            services.AddSingleton<IUsersRepository, MongoDbUsersRepository>();
+            services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddSingleton<IPasswordHasher<string>, PasswordHasher<string>>();
         }
 
         /// <summary>
@@ -107,19 +144,9 @@ namespace ProCamp
         /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
-
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", ApiName));
@@ -147,9 +174,12 @@ namespace ProCamp
                     "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                 Name = "Authorization",
                 In = "header",
-                Type = "apiKey"
+                Type = "apiKey",
             });
-
+            options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+            {
+                {"Bearer", Enumerable.Empty<string>()}
+            });
             options.IgnoreObsoleteActions();
         }
 

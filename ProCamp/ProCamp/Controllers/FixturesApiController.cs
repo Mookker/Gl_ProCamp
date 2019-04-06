@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using CommonLibrary.Helpers;
 using CommonLibrary.Models.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProCamp.Managers.Interfaces;
 using ProCamp.Models;
@@ -72,6 +74,7 @@ namespace ProCamp.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(List<FixturesResponse>), 200)]
+        [Authorize(Roles = AuthConstants.FixtureReaderRole)]
         public async Task<IActionResult> GetAllFixtures([FromQuery] FixturesQueryParams queryParams)
         {
             var fixtures = await _fixturesRepository.GetMultiple(queryParams !=null ? new FixturesSearchOptions
@@ -94,6 +97,7 @@ namespace ProCamp.Controllers
         [HttpGet("{fixtureId}")]
         [ProducesResponseType(typeof(FixturesResponse), 200)]
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
+        [Authorize(Roles = AuthConstants.FixtureReaderRole)]
         public async Task<IActionResult> GetFixtureById([FromRoute]string fixtureId)
         {
             var fixture = await _fixtureManager.GetFixture(fixtureId);
@@ -112,6 +116,7 @@ namespace ProCamp.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(FixturesResponse), 200)]
         [ProducesResponseType(typeof(BadRequestResponse), 400)]
+        [Authorize(Roles = AuthConstants.FixtureWriterRole)]
         public async Task<IActionResult> CreateFixture([FromBody] CreateFixtureRequest createFixtureRequest)
         {
             if (createFixtureRequest == null)
@@ -144,6 +149,7 @@ namespace ProCamp.Controllers
         [HttpPut("{fixtureId}")]
         [ProducesResponseType(typeof(FixturesResponse), 200)]
         [ProducesResponseType(typeof(BadRequestResponse), 400)]
+        [Authorize(Roles = AuthConstants.FixtureWriterRole)]
         public async Task<IActionResult> UpdateOrCreateFixture(string fixtureId,
             [FromBody] UpdateFixtureRequest updateFixtureRequest)
         {
@@ -183,6 +189,7 @@ namespace ProCamp.Controllers
         [HttpDelete("{fixtureId}")]
         [ProducesResponseType(typeof(FixturesResponse), 200)]
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
+        [Authorize(Roles = AuthConstants.FixtureWriterRole)]
         public async Task<IActionResult> DeleteFixtureById([FromRoute]string fixtureId)
         {
             var removed = await _fixturesRepository.Remove(fixtureId);
@@ -201,6 +208,7 @@ namespace ProCamp.Controllers
         [HttpHead("{fixtureId}")]
         [ProducesResponseType(typeof(FixturesResponse), 200)]
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
+        [Authorize(Roles = AuthConstants.FixtureReaderRole)]
         public IActionResult FixtureExists([FromRoute] string fixtureId)
         {
             var exists = _fixtures.Any(f => f.Id == fixtureId);
@@ -218,6 +226,7 @@ namespace ProCamp.Controllers
         [HttpGet("/nearest")]
         [ProducesResponseType(typeof(List<NearestFixture>), 200)]
         [ProducesResponseType(typeof(BadRequestResponse), 400)]
+        [Authorize(Roles = AuthConstants.FixtureReaderRole)]
         public async Task<IActionResult> GetNearestFixtures([FromQuery] NearestQueryParams nearestQueryParams)
         {
             //TODO: params validation
@@ -233,6 +242,7 @@ namespace ProCamp.Controllers
         /// <returns></returns>
         [HttpPut("seed")]
         [ProducesResponseType(typeof(Fixture), 200)]
+        [Authorize(Roles = AuthConstants.FixtureWriterRole)]
         public async Task<IActionResult> Seed()
         {
             foreach (var fixture in _fixtures)

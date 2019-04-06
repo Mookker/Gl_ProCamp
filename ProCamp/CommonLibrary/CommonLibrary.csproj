@@ -17,11 +17,17 @@
       <PackageReference Include="StackExchange.Redis">
         <Version>2.0.571</Version>
       </PackageReference>
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt">
+        <Version>5.4.0</Version>
+      </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
       <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
         <HintPath>C:\Users\ivan.bykov\.nuget\packages\microsoft.extensions.logging.abstractions\2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+      </Reference>
+      <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+        <HintPath>C:\Users\ivan.bykov\.nuget\packages\microsoft.identitymodel.tokens\5.3.0\lib\netstandard2.0\Microsoft.IdentityModel.Tokens.dll</HintPath>
       </Reference>
     </ItemGroup>
 
