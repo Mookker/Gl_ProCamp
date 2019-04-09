@@ -1,8 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProCamp", "ProCamp\ProCamp.csproj", "{F8DF64AD-C058-4200-A563-320227FDC16D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixturesApi", "FixturesApi\FixturesApi.csproj", "{F8DF64AD-C058-4200-A563-320227FDC16D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibrary", "CommonLibrary\CommonLibrary.csproj", "{5088FD82-8DE7-4C2A-8971-4A5BC9DABE2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthApi", "AuthApi\AuthApi.csproj", "{E44E4BF3-3A17-4473-8229-782EE895A143}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +20,9 @@ Global
 		{5088FD82-8DE7-4C2A-8971-4A5BC9DABE2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5088FD82-8DE7-4C2A-8971-4A5BC9DABE2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5088FD82-8DE7-4C2A-8971-4A5BC9DABE2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E44E4BF3-3A17-4473-8229-782EE895A143}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E44E4BF3-3A17-4473-8229-782EE895A143}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E44E4BF3-3A17-4473-8229-782EE895A143}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E44E4BF3-3A17-4473-8229-782EE895A143}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
