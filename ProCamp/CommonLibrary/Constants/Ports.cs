@@ -11,5 +11,10 @@ namespace CommonLibrary.Constants
         /// Auth port
         /// </summary>
         public const int AuthPort = 6001;
+        
+        /// <summary>
+        /// Betting
+        /// </summary>
+        public const int BettingPort = 6002;
     }
 }

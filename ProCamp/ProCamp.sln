@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibrary", "CommonLibr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthApi", "AuthApi\AuthApi.csproj", "{E44E4BF3-3A17-4473-8229-782EE895A143}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunicationLibrary", "CommunicationLibrary\CommunicationLibrary.csproj", "{F2BCB878-FD6E-4E32-BB6E-9E61220966AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BettingApi", "BettingApi\BettingApi.csproj", "{6A7835A4-12A9-4EF5-BBE9-4AA6263ACE05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{E44E4BF3-3A17-4473-8229-782EE895A143}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E44E4BF3-3A17-4473-8229-782EE895A143}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E44E4BF3-3A17-4473-8229-782EE895A143}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2BCB878-FD6E-4E32-BB6E-9E61220966AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2BCB878-FD6E-4E32-BB6E-9E61220966AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2BCB878-FD6E-4E32-BB6E-9E61220966AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2BCB878-FD6E-4E32-BB6E-9E61220966AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A7835A4-12A9-4EF5-BBE9-4AA6263ACE05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A7835A4-12A9-4EF5-BBE9-4AA6263ACE05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A7835A4-12A9-4EF5-BBE9-4AA6263ACE05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A7835A4-12A9-4EF5-BBE9-4AA6263ACE05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

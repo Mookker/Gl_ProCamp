@@ -1,45 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Xml.XPath;
+using System.Threading.Tasks;
+using AuthApi.Managers.Implementations;
+using AuthApi.Managers.Interfaces;
+using AuthApi.Models;
+using AuthApi.Repositories.Implementations;
+using AuthApi.Repositories.Interfaces;
 using AutoMapper;
-using CommonLibrary.Cache.Implementations;
-using CommonLibrary.Cache.Interfaces;
 using CommonLibrary.Config;
 using CommonLibrary.Helpers;
-using FixturesApi.Managers;
-using FixturesApi.Managers.Cache;
-using FixturesApi.Managers.Cache.Interfaces;
-using FixturesApi.Managers.Interfaces;
-using FixturesApi.Models;
-using FixturesApi.Models.Requests;
-using FixturesApi.Models.Responses;
-using FixturesApi.Repositories.Implementations;
-using FixturesApi.Repositories.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace FixturesApi
+namespace AuthApi
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class Startup
     {
         private readonly IHostingEnvironment _hostingEnv;
-        private readonly string ApiName = "FixturesApi";
+        private readonly string ApiName = "AuthApi";
 
         /// <summary>
         /// Constructor
@@ -62,36 +49,15 @@ namespace FixturesApi
             Configuration = builder.Build();
         }
 
-        /// <summary>
-        /// Cfg
-        /// </summary>
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public IConfiguration Configuration { get; }
 
-        /// <summary>
-        /// This method gets called by the runtime. Use this method to add services to the container.
-        /// </summary>
-        /// <param name="services"></param>
+        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(opts =>
+            
+            services.Configure<ApiKeyManagerOptions>(o => 
             {
-                opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            });
-
-            services.AddAuthentication(o =>
-            {
-                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(o =>
-            {
-                o.TokenValidationParameters.ValidateIssuer = true;
-                o.TokenValidationParameters.ValidIssuer = Configuration.GetValue<string>("iss");
-                o.TokenValidationParameters.ValidateIssuerSigningKey = true;
-                o.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("JwtSecret")));
-                o.TokenValidationParameters.ValidateAudience = false;
-                o.TokenValidationParameters.ValidateLifetime = true;
-                o.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
+                o.Password = Configuration.GetValue<string>("ApiKeyManagerPassword");
             });
 
             services.Configure<JwtOptions>(o =>
@@ -100,13 +66,6 @@ namespace FixturesApi
                 o.Key = Configuration.GetValue<string>("JwtSecret");
             });
             services.AddSwaggerGen(options => { AppSetup.SetupSwagger(options, ApiName, _hostingEnv); });
-
-            Mapper.Initialize(c =>
-            {
-                c.CreateMissingTypeMaps = true;
-                c.CreateMap<Fixture, FixturesResponse>();
-                c.CreateMap<CreateFixtureRequest, Fixture>().ForMember(m => m.Id, expression => expression.Ignore());
-            });
 
             services.Configure<RedisCacheConfiguration>(x =>
             {
@@ -117,30 +76,32 @@ namespace FixturesApi
 
             services.Configure<MongoConfiguration>(x =>
                 x.DbName = Configuration.GetValue<string>("MongoDbName") ?? "football");
-
             services.AddSingleton<IMongoClient>(x => new MongoClient(MongoConnectionString(Configuration)));
 
-            services.AddSingleton<IBaseCache, BaseCache>();
-            services.AddSingleton<IFixturesRepository, MongoDbFixturesRepository>();
-            services.AddSingleton<IFixturesCacheManager, FixturesCacheManager>();
-            services.AddSingleton<IFixtureManager, FixtureManager>();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddSingleton<IRoleManager, RoleManager>();
+            services.AddSingleton<IUserManager, UserManager>();
+            services.AddSingleton<IApiKeyManager, ApiKeyManager>();
+            services.AddSingleton<IApiKeyRepository, MongoDbApiKeyRepository>();
+            services.AddSingleton<IUsersRepository, MongoDbUsersRepository>();
+            services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddSingleton<IPasswordHasher<string>, PasswordHasher<string>>();
+
+            Mapper.Initialize(c =>
+            {
+                c.CreateMissingTypeMaps = true;
+            });
         }
 
-        /// <summary>
-        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        /// </summary>
-        /// <param name="app"></param>
-        /// <param name="env"></param>
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
-
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", ApiName));
         }
-
 
         private string RedisConnectionString(IConfiguration configuration)
         {
@@ -173,7 +134,5 @@ namespace FixturesApi
 
             return mongoConnectionString;
         }
-        
     }
 }
-

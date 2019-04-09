@@ -17,6 +17,8 @@ namespace CommonLibrary.Helpers
         {
             var nbf = DateTime.UtcNow;
             var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.Role, AuthConstants.FixtureReaderRole));
+            claims.Add(new Claim(ClaimTypes.Role, AuthConstants.FixtureWriterRole));
             claims.Add(new Claim(ClaimTypes.Role, AuthConstants.ProtectedUserRole));
 
             var tokenString = GenerateTokenString(key, iss, claims, nbf);

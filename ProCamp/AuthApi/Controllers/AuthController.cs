@@ -42,7 +42,7 @@ namespace AuthApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("api-key")]
-        [Authorize(Roles = AuthConstants.ApiKeyWriterRole)]
+        //[Authorize(Roles = AuthConstants.ApiKeyWriterRole)]
         public async Task<ActionResult<string>> GenerateApiKey()
         {
             var key = await _apiKeyManager.GenerateKey();
@@ -77,7 +77,7 @@ namespace AuthApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("jwt")]
-        public async Task<ActionResult<string>> GenerateJwtToken()
+        public async Task<ActionResult<ApiKeyJwtResponse>> GenerateJwtToken()
         {
             if (!Request.Headers.ContainsKey(AuthConstants.ApiKeyHeaderName))
                 return Unauthorized($"{AuthConstants.ApiKeyHeaderName} is missing");
@@ -88,7 +88,7 @@ namespace AuthApi.Controllers
                 return Unauthorized("Key is invalid");
             var jwt = JwtGenerator.GenerateProtectedToken(_jwtOptions.Value.Key, _jwtOptions.Value.Iss);
             
-            return Ok(jwt);
+            return Ok(new ApiKeyJwtResponse{Token = jwt});
         }
 
         /// <summary>
