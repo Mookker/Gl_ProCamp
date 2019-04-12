@@ -13,7 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options; 
+using Polly;
 
 namespace BettingApi
 {
@@ -59,7 +60,9 @@ namespace BettingApi
             {
                 cfg.BaseAddress = new Uri(AuthAddress);
                 cfg.DefaultRequestHeaders.Add("Accept", "application/json");
-            });
+                
+            }).AddTransientHttpErrorPolicy(builder =>
+                builder.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(600)));;
 
             services.AddSingleton<IFixtureService, FixturesService>();
             services.AddSingleton<IAuthService, AuthService>();
