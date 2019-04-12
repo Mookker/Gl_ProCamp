@@ -18,8 +18,15 @@ namespace CommonLibrary.Cache.Implementations
         public BaseCache(IOptions<RedisCacheConfiguration> redisCfgOptions, ILogger<BaseCache> logger)
         {
             _logger = logger;
-            var connection = ConnectionMultiplexer.Connect(redisCfgOptions.Value.ConnectionString);
-            _redisDb = connection.GetDatabase();
+            try
+            {
+                var connection = ConnectionMultiplexer.Connect(redisCfgOptions.Value.ConnectionString);
+                _redisDb = connection.GetDatabase();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "cannot connect to Redis");
+            }
             _prefix = $"{redisCfgOptions.Value.Environment ?? ""}:{redisCfgOptions.Value.ApiName ?? ""}";
         }
 
@@ -27,10 +34,9 @@ namespace CommonLibrary.Cache.Implementations
         {
             try
             {
-                var value = JsonConvert.DeserializeObject<T>(await _redisDb.StringGetAsync($"{_prefix}:" + cacheKey));
-
-                return value;
-
+                var jsonObj = await _redisDb.StringGetAsync($"{_prefix}:" + cacheKey);
+                if(!String.IsNullOrWhiteSpace(jsonObj))
+                    return JsonConvert.DeserializeObject<T>(jsonObj);
             }
             catch (Exception ex)
             {

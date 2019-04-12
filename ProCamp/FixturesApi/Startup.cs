@@ -52,13 +52,20 @@ namespace FixturesApi
             Configuration = configuration;
 
             var builder = new ConfigurationBuilder();
+            builder.AddConfiguration(configuration);
 
             if (_hostingEnv.IsEnvironment("Development"))
             {
                 builder.AddUserSecrets<Startup>();
             }
+
+            var switchMappings = new Dictionary<string, string>
+            {
+                {"-redis", "ConnectionStrings:RedisConnectionString"}
+            };
             
-            builder.AddConfiguration(configuration);
+            builder.AddCommandLine(Environment.GetCommandLineArgs().Skip(1).ToArray(), switchMappings);
+           
             Configuration = builder.Build();
         }
 
@@ -147,8 +154,7 @@ namespace FixturesApi
             var redisUri = "127.0.0.1:6379";
             if (configuration != null)
             {
-                var configValue = configuration["SecretRedisConnectionString"] ??
-                                  configuration.GetConnectionString("RedisConnectionString");
+                var configValue = configuration.GetConnectionString("RedisConnectionString");
                 if (!string.IsNullOrEmpty(configValue))
                 {
                     redisUri = configValue;
@@ -163,8 +169,7 @@ namespace FixturesApi
             var mongoConnectionString = "127.0.0.1:27017";
             if (configuration != null)
             {
-                var configValue = configuration["SecretMongoConnectionString"] ??
-                                  configuration.GetConnectionString("MongoConnectionString");
+                var configValue = configuration.GetConnectionString("MongoConnectionString");
                 if (!string.IsNullOrEmpty(configValue))
                 {
                     mongoConnectionString = configValue;

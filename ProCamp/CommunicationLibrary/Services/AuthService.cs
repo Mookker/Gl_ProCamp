@@ -21,7 +21,7 @@ namespace CommunicationLibrary.Services
         {
             _httpClient.DefaultRequestHeaders.Remove(AuthConstants.ApiKeyHeaderName);
             _httpClient.DefaultRequestHeaders.Add(AuthConstants.ApiKeyHeaderName, apiKey);
-            var response = await _httpClient.GetJsonResponse<ApiKeyJwtResponse>("jwt");
+            var response = await _httpClient.GetJsonResponse<ApiKeyJwtResponse>("api/v1/auth/jwt");
 
             return response?.Token;
         }

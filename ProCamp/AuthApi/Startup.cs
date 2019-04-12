@@ -39,13 +39,13 @@ namespace AuthApi
             Configuration = configuration;
 
             var builder = new ConfigurationBuilder();
+            builder.AddConfiguration(configuration);
 
             if (_hostingEnv.IsEnvironment("Development"))
             {
                 builder.AddUserSecrets<Startup>();
             }
             
-            builder.AddConfiguration(configuration);
             Configuration = builder.Build();
         }
 
@@ -108,8 +108,7 @@ namespace AuthApi
             var redisUri = "127.0.0.1:6379";
             if (configuration != null)
             {
-                var configValue = configuration["SecretRedisConnectionString"] ??
-                                  configuration.GetConnectionString("RedisConnectionString");
+                var configValue = configuration.GetConnectionString("RedisConnectionString");
                 if (!string.IsNullOrEmpty(configValue))
                 {
                     redisUri = configValue;
@@ -124,14 +123,14 @@ namespace AuthApi
             var mongoConnectionString = "127.0.0.1:27017";
             if (configuration != null)
             {
-                var configValue = configuration["SecretMongoConnectionString"] ??
-                                  configuration.GetConnectionString("MongoConnectionString");
+                var configValue = configuration.GetConnectionString("MongoConnectionString");
                 if (!string.IsNullOrEmpty(configValue))
                 {
                     mongoConnectionString = configValue;
                 }
             }
 
+            Console.WriteLine(mongoConnectionString);
             return mongoConnectionString;
         }
     }

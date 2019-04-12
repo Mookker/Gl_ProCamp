@@ -19,7 +19,7 @@ namespace CommunicationLibrary.Services
 
         public Task<FixturesResponse> GetFixture(string id)
         {
-            return _httpClient.GetJsonResponse<FixturesResponse>($"{id}");
+            return _httpClient.GetJsonResponse<FixturesResponse>($"api/v1/fixtures/{id}");
         }
 
         public void Authorize(string jwt)

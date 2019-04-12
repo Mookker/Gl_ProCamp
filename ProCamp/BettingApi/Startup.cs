@@ -34,13 +34,20 @@ namespace BettingApi
             Configuration = configuration;
 
             var builder = new ConfigurationBuilder();
+            var switchMappings = new Dictionary<string, string>
+            {
+                {"-fixtures", "--fixturesApi"},
+                {"-auth", "--authApi"},
+            };
+
+            builder.AddConfiguration(configuration);
 
             if (_hostingEnv.IsEnvironment("Development"))
             {
                 builder.AddUserSecrets<Startup>();
             }
-            
-            builder.AddConfiguration(configuration);
+            builder.AddCommandLine(Environment.GetCommandLineArgs().Skip(1).ToArray(), switchMappings);
+
             Configuration = builder.Build();
         }
 
@@ -53,7 +60,7 @@ namespace BettingApi
             services.AddSwaggerGen(options => { AppSetup.SetupSwagger(options, ApiName, _hostingEnv); });
             services.AddHttpClient(ServiceNames.Fixtures, cfg =>
             {
-                cfg.BaseAddress = new Uri(FixtruesAddress);
+                cfg.BaseAddress = new Uri(FixturesAddress);
                 cfg.DefaultRequestHeaders.Add("Accept", "application/json");
             });
             services.AddHttpClient<AuthService>(ServiceNames.Auth,cfg =>
@@ -66,6 +73,8 @@ namespace BettingApi
 
             services.AddSingleton<IFixtureService, FixturesService>();
             services.AddSingleton<IAuthService, AuthService>();
+            Console.WriteLine($"Auth running on {AuthAddress}");
+            Console.WriteLine($"Fixtures running on {FixturesAddress}");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,7 +86,28 @@ namespace BettingApi
             app.UseMvc();
         }
 
-        private string FixtruesAddress => $"http://localhost:{Ports.FixturesPort}/api/v1/fixtures/";
-        private string AuthAddress => $"http://localhost:{Ports.AuthPort}/api/v1/auth/";
+        private string FixturesAddress
+        {
+            get
+            {
+                var cfgVal = Configuration.GetValue<string>("--fixturesApi");
+                if (!String.IsNullOrWhiteSpace(cfgVal))
+                    return cfgVal;
+                
+                return $"http://localhost:{Ports.FixturesPort}/";
+            }
+        }
+
+        private string AuthAddress
+        {
+            get
+            {
+                var cfgVal = Configuration.GetValue<string>("--authApi");
+                if (!String.IsNullOrWhiteSpace(cfgVal))
+                    return cfgVal;
+
+                return $"http://localhost:{Ports.AuthPort}/";
+            }
+        }
     }
 }
