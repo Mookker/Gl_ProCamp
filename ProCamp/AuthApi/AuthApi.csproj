@@ -5,6 +5,7 @@
         <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <UserSecretsId>7305702b-cdc8-4909-902f-7512d0409dfe</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,6 +14,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.10" />
     </ItemGroup>
 
     <ItemGroup>
