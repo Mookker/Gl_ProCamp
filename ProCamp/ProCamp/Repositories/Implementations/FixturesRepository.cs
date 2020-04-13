@@ -7,7 +7,7 @@ using ProCamp.Repositories.Interfaces;
 
 namespace ProCamp.Repositories.Implementations
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IFixturesRepository" />
     public class FixturesRepository : InMemoryRepository<Fixture, FixturesSearchOptions>, IFixturesRepository
     {
         private readonly ILogger<FixturesRepository> _logger;
