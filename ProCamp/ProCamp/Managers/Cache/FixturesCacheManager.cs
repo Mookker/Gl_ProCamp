@@ -25,6 +25,11 @@ namespace ProCamp.Managers.Cache
             return _baseCache.GetObjectFromCache<Fixture>(GetFixtureCacheKey(id));
         }
 
+        public Task RemoveFixture(string id)
+        {
+            return _baseCache.RemoveObjectFromCache(GetFixtureCacheKey(id));
+        }
+
         private string GetFixtureCacheKey(string fixtureId)
         {
             return $"fixture:{fixtureId}";

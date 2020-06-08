@@ -1,14 +1,19 @@
 using System;
 using Newtonsoft.Json;
 
-namespace ProCamp.Models.Requests
+namespace CommonLibrary.Models.Requests
 {
     /// <summary>
     /// 
     /// </summary>
     [Serializable]
-    public class CreateFixtureRequest
+    public class UpdateFixtureRequest
     {
+        /// <summary>
+        /// Id
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        public string Id { get; set; }
         /// <summary>
         /// Date of game
         /// </summary>

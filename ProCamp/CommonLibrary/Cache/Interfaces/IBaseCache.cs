@@ -10,5 +10,6 @@ namespace CommonLibrary.Cache.Interfaces
 
         Task<string> GetStringFromCache(string cacheKey);
         Task<bool> SetStringToCache(string cacheKey, string value, TimeSpan? expiry);
+        Task RemoveObjectFromCache(string cacheKey);
     }
 }

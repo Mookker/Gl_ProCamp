@@ -1,17 +1,15 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommonLibrary.Models.Errors;
+using CommonLibrary.Models.Requests;
+using CommonLibrary.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 using ProCamp.Managers.Interfaces;
 using ProCamp.Models;
 using ProCamp.Models.QueryParams;
-using ProCamp.Models.Requests;
-using ProCamp.Models.Responses;
 using ProCamp.Models.Search;
-using ProCamp.Repositories.Interfaces;
 
 namespace ProCamp.Controllers
 {
@@ -21,44 +19,15 @@ namespace ProCamp.Controllers
     [Route("/api/v1/fixtures")]
     public class FixturesApiController : Controller
     {
-        private readonly IFixturesRepository _fixturesRepository;
         private readonly IFixtureManager _fixtureManager;
 
-        private static List<Fixture> _fixtures = new List<Fixture>
-        {
-            new Fixture
-            {
-                Id = "1",
-                AwayTeamName = "ManCity",
-                HomeTeamName = "Fulham",
-                Date = new DateTime(2019, 3, 30, 12, 30, 0)
-            },
-            new Fixture
-            {
-                Id = Guid.NewGuid().ToString("N"),
-                AwayTeamName = "Cardiff City",
-                HomeTeamName = "ManCity",
-                Date = new DateTime(2019, 4, 3, 19, 45, 0)
-            },
-            
-            new Fixture
-            {
-                Id = Guid.NewGuid().ToString("N"),
-                AwayTeamName = "ManCity",
-                HomeTeamName = "Brighton",
-                Date = new DateTime(2019, 4, 6, 17, 30, 0)
-            },
-            
-        };
 
         /// <summary>
         /// Constuctor
         /// </summary>
-        /// <param name="fixturesRepository"></param>
         /// <param name="fixtureManager"></param>
-        public FixturesApiController(IFixturesRepository fixturesRepository, IFixtureManager fixtureManager)
+        public FixturesApiController(IFixtureManager fixtureManager)
         {
-            _fixturesRepository = fixturesRepository;
             _fixtureManager = fixtureManager;
         }
 
@@ -71,7 +40,7 @@ namespace ProCamp.Controllers
         [ProducesResponseType(typeof(List<FixturesResponse>), 200)]
         public async Task<IActionResult> GetAllFixtures([FromQuery] FixturesQueryParams queryParams)
         {
-            var fixtures = await _fixturesRepository.GetMultiple(queryParams !=null ? new FixturesSearchOptions
+            var fixtures = await _fixtureManager.GetMultiple(queryParams != null ? new FixturesSearchOptions
             {
                 Id = queryParams.Id,
                 HomeTeamName = queryParams.HomeTeamName,
@@ -124,10 +93,8 @@ namespace ProCamp.Controllers
                 return BadRequest(new BadRequestResponse("empty home team"));
             }
             
-            
             var newFixture = Mapper.Map<Fixture>(createFixtureRequest);
-            newFixture.Id = Guid.NewGuid().ToString("N");
-            await _fixturesRepository.Create(newFixture);
+            await _fixtureManager.CreateFixture(newFixture);
 
             return Ok(Mapper.Map<FixturesResponse>(newFixture));
         }
@@ -167,7 +134,7 @@ namespace ProCamp.Controllers
             }
 
             var fixture = Mapper.Map<Fixture>(updateFixtureRequest);
-            await _fixturesRepository.Replace(fixture);
+            await _fixtureManager.ReplaceFixture(fixture);
 
             return Ok(Mapper.Map<FixturesResponse>(fixture));
         }
@@ -182,7 +149,7 @@ namespace ProCamp.Controllers
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
         public async Task<IActionResult> DeleteFixtureById([FromRoute]string fixtureId)
         {
-            var removed = await _fixturesRepository.Remove(fixtureId);
+            var removed = await _fixtureManager.RemoveFixture(fixtureId);
             if (!removed)
                 return NotFound(new NotFoundErrorResponse($"fixture with id {fixtureId}"));
 
@@ -200,8 +167,8 @@ namespace ProCamp.Controllers
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
         public IActionResult FixtureExists([FromRoute] string fixtureId)
         {
-            var exists = _fixtures.Any(f => f.Id == fixtureId);
-            if (!exists)
+            var exists = _fixtureManager.GetFixture(fixtureId);
+            if (exists == null)
                 return NotFound(new NotFoundErrorResponse($"fixture with id {fixtureId}"));
 
             return Ok();
@@ -215,17 +182,7 @@ namespace ProCamp.Controllers
         [ProducesResponseType(typeof(Fixture), 200)]
         public async Task<IActionResult> Seed()
         {
-            foreach (var fixture in _fixtures)
-            {
-                if (await _fixturesRepository.Exists(fixture.Id))
-                {
-                    await _fixturesRepository.Replace(fixture);
-                }
-                else
-                {
-                    await _fixturesRepository.Create(fixture);
-                }
-            }
+            await _fixtureManager.Seed();
 
             return Ok();
         }

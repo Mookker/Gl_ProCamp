@@ -21,5 +21,12 @@ namespace ProCamp.Managers.Cache.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Fixture> GetFixture(string id);
+
+        /// <summary>
+        /// Removes from cache
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task RemoveFixture(string id);
     }
 }

@@ -88,5 +88,19 @@ namespace CommonLibrary.Cache.Implementations
 
             return false;
         }
+
+        public Task RemoveObjectFromCache(string cacheKey)
+        {
+            try
+            {
+                return _redisDb.KeyDeleteAsync($"{_prefix}:" + cacheKey);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, $"error in setting {cacheKey}");
+            }
+            
+            return Task.CompletedTask;
+        }
     }
 }
