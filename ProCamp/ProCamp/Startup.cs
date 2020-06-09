@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Xml.XPath;
 using AutoMapper;
 using CommonLibrary.Cache.Implementations;
@@ -77,7 +78,7 @@ namespace ProCamp
             Mapper.Initialize(c =>
             {
                 c.CreateMissingTypeMaps = true;
-                c.CreateMap<Fixture, FixturesResponse>();
+                c.CreateMap<Fixture, FixtureResponse>();
                 c.CreateMap<CreateFixtureRequest, Fixture>().ForMember(m => m.Id, expression => expression.Ignore());
             });
 
@@ -92,6 +93,12 @@ namespace ProCamp
             services.AddSingleton<IFixturesRepository, FixturesRepository>();
             services.AddSingleton<IFixturesCacheManager, FixturesCacheManager>();
             services.AddSingleton<IFixtureManager, FixtureManager>();
+            services.Scan(scan => scan
+                .FromAssemblies(Assembly.GetExecutingAssembly())
+                .AddClasses(classes => classes.Where(c =>
+                    c.Name.EndsWith("Command") || c.Name.EndsWith("Query") || c.Name.EndsWith("Handler")))
+                .AsSelf()
+                .WithScopedLifetime());
         }
 
         /// <summary>
@@ -154,7 +161,7 @@ namespace ProCamp
             {
                 var configValue = configuration["SecretRedisConnectionString"] ??
                                   configuration.GetConnectionString("RedisConnectionString");
-                if (string.IsNullOrEmpty(configValue))
+                if (!string.IsNullOrEmpty(configValue))
                 {
                     redisUri = configValue;
                 }

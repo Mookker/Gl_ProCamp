@@ -37,7 +37,7 @@ namespace ProCamp.Controllers
         /// <param name="queryParams"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(List<FixturesResponse>), 200)]
+        [ProducesResponseType(typeof(List<FixtureResponse>), 200)]
         public async Task<IActionResult> GetAllFixtures([FromQuery] FixturesQueryParams queryParams)
         {
             var fixtures = await _fixtureManager.GetMultiple(queryParams != null ? new FixturesSearchOptions
@@ -49,7 +49,7 @@ namespace ProCamp.Controllers
                 DateFrom = queryParams.DateFrom
             } : null);
             
-            return Ok(fixtures.Select(Mapper.Map<FixturesResponse>).ToList());
+            return Ok(fixtures.Select(Mapper.Map<FixtureResponse>).ToList());
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace ProCamp.Controllers
         /// <param name="fixtureId"></param>
         /// <returns></returns>
         [HttpGet("{fixtureId}")]
-        [ProducesResponseType(typeof(FixturesResponse), 200)]
+        [ProducesResponseType(typeof(FixtureResponse), 200)]
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
         public async Task<IActionResult> GetFixtureById([FromRoute]string fixtureId)
         {
@@ -67,7 +67,7 @@ namespace ProCamp.Controllers
             if (fixture == null)
                 return NotFound(new NotFoundErrorResponse($"fixture with id {fixtureId}"));
 
-            return Ok(Mapper.Map<FixturesResponse>(fixture));
+            return Ok(Mapper.Map<FixtureResponse>(fixture));
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace ProCamp.Controllers
         /// <param name="createFixtureRequest"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(typeof(FixturesResponse), 200)]
+        [ProducesResponseType(typeof(FixtureResponse), 200)]
         [ProducesResponseType(typeof(BadRequestResponse), 400)]
         public async Task<IActionResult> CreateFixture([FromBody] CreateFixtureRequest createFixtureRequest)
         {
@@ -94,9 +94,9 @@ namespace ProCamp.Controllers
             }
             
             var newFixture = Mapper.Map<Fixture>(createFixtureRequest);
-            await _fixtureManager.CreateFixture(newFixture);
+            newFixture = await _fixtureManager.CreateFixture(newFixture);
 
-            return Ok(Mapper.Map<FixturesResponse>(newFixture));
+            return Ok(Mapper.Map<FixtureResponse>(newFixture));
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace ProCamp.Controllers
         /// <param name="updateFixtureRequest"></param>
         /// <returns></returns>
         [HttpPut("{fixtureId}")]
-        [ProducesResponseType(typeof(FixturesResponse), 200)]
+        [ProducesResponseType(typeof(FixtureResponse), 200)]
         [ProducesResponseType(typeof(BadRequestResponse), 400)]
         public async Task<IActionResult> UpdateOrCreateFixture(string fixtureId,
             [FromBody] UpdateFixtureRequest updateFixtureRequest)
@@ -136,7 +136,7 @@ namespace ProCamp.Controllers
             var fixture = Mapper.Map<Fixture>(updateFixtureRequest);
             await _fixtureManager.ReplaceFixture(fixture);
 
-            return Ok(Mapper.Map<FixturesResponse>(fixture));
+            return Ok(Mapper.Map<FixtureResponse>(fixture));
         }
         
         /// <summary>
@@ -145,7 +145,7 @@ namespace ProCamp.Controllers
         /// <param name="fixtureId"></param>
         /// <returns></returns>
         [HttpDelete("{fixtureId}")]
-        [ProducesResponseType(typeof(FixturesResponse), 200)]
+        [ProducesResponseType(typeof(FixtureResponse), 200)]
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
         public async Task<IActionResult> DeleteFixtureById([FromRoute]string fixtureId)
         {
@@ -163,7 +163,7 @@ namespace ProCamp.Controllers
         /// <param name="fixtureId"></param>
         /// <returns></returns>
         [HttpHead("{fixtureId}")]
-        [ProducesResponseType(typeof(FixturesResponse), 200)]
+        [ProducesResponseType(typeof(FixtureResponse), 200)]
         [ProducesResponseType(typeof(NotFoundErrorResponse), 404)]
         public IActionResult FixtureExists([FromRoute] string fixtureId)
         {

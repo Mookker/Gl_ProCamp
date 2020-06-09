@@ -62,7 +62,7 @@ namespace ProCamp.Managers
             return cached;
         }
 
-        public async Task<bool> CreateFixture(Fixture fixture)
+        public async Task<Fixture> CreateFixture(Fixture fixture)
         {
             if (!string.IsNullOrWhiteSpace(fixture.Id))
             {
@@ -82,8 +82,12 @@ namespace ProCamp.Managers
             {
                 await _fixturesCacheManager.AddFixture(fixture);
             }
+            else
+            {
+                return null;
+            }
 
-            return success;
+            return fixture;
         }
 
         public async Task<bool> ReplaceFixture(Fixture fixture)

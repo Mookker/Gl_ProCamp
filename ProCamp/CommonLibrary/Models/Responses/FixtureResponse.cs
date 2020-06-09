@@ -7,7 +7,7 @@ namespace CommonLibrary.Models.Responses
     /// 
     /// </summary>
     [Serializable]
-    public class FixturesResponse
+    public class FixtureResponse
     {
         /// <summary>
         /// Id of fixture

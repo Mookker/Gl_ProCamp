@@ -22,7 +22,7 @@ namespace ProCamp.Managers.Interfaces
         /// </summary>
         /// <param name="fixture"></param>
         /// <returns></returns>
-        Task<bool> CreateFixture(Fixture fixture);
+        Task<Fixture> CreateFixture(Fixture fixture);
 
         /// <summary>
         /// Replaces or create new fixture
