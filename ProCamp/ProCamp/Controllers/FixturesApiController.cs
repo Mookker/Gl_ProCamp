@@ -48,9 +48,9 @@ namespace ProCamp.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(List<FixturesResponse>), 200)]
-        public IActionResult GetAllFixtures()
+        public IActionResult GetAllFixtures(int offset = 0, int limit = Int32.MaxValue)
         {
-            return Ok(_fixtures?.Select(Mapper.Map<FixturesResponse>).ToList());
+            return Ok(_fixtures?.Skip(offset).Take(limit).Select(Mapper.Map<FixturesResponse>).ToList());
         }
 
         /// <summary>
