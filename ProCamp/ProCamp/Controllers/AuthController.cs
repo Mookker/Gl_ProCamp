@@ -75,7 +75,7 @@ namespace ProCamp.Controllers
         /// Generates short-time JWT token
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("jwt")]
         public async Task<ActionResult<string>> GenerateJwtToken()
         {
