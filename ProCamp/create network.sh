@@ -1,0 +1,1 @@
+docker network create --driver=bridge --subnet=192.168.0.0/12 --ip-range=192.168.101.0/12 gl-procamp
